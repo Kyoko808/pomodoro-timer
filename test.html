@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Audio Test</title>
+</head>
+<body>
+    <h1>Audio Test</h1>
+    <p>Click the button to play a sound.</p>
+    <button id="play-button">Play Sound</button>
+
+    <script>
+        const audio = new Audio('https://upload.wikimedia.org/wikipedia/commons/c/c8/KDE_Beep_Beep.ogg');
+        const playButton = document.getElementById('play-button');
+
+        playButton.addEventListener('click', () => {
+            audio.play()
+                .then(() => console.log('Playback started successfully.'))
+                .catch(error => console.error('Playback failed:', error));
+        });
+    </script>
+</body>
+</html>

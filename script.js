@@ -3,6 +3,7 @@ const statusDisplay = document.getElementById('status-display');
 const startButton = document.getElementById('start-button');
 const pauseButton = document.getElementById('pause-button');
 const resetButton = document.getElementById('reset-button');
+const testSoundButton = document.getElementById('test-sound-button');
 
 let timer;
 let timeLeft;
@@ -14,6 +15,8 @@ const WORK_TIME = 25 * 60; // 25 minutes
 const SHORT_BREAK_TIME = 5 * 60; // 5 minutes
 const LONG_BREAK_TIME = 15 * 60; // 15 minutes
 
+const notificationAudio = new Audio('https://soundbible.com/grab.php?id=2218&type=wav');
+
 function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -22,12 +25,30 @@ function formatTime(seconds) {
 
 function updateDisplay() {
     timerDisplay.textContent = formatTime(timeLeft);
+    
+    let stageInfo = '';
     if (currentSession === 'work') {
-        statusDisplay.textContent = '作業時間';
+        stageInfo = `作業時間 (ポモドーロ ${workSessionsCompleted + 1})`;
     } else if (currentSession === 'short-break') {
-        statusDisplay.textContent = '短い休憩';
+        stageInfo = '短い休憩';
     } else {
-        statusDisplay.textContent = '長い休憩';
+        stageInfo = '長い休憩';
+    }
+    statusDisplay.textContent = stageInfo;
+}
+
+function getSessionDuration() {
+    if (currentSession === 'work') return WORK_TIME;
+    if (currentSession === 'short-break') return SHORT_BREAK_TIME;
+    return LONG_BREAK_TIME;
+}
+
+function playNotificationSound() {
+    const promise = notificationAudio.play();
+    if (promise !== undefined) {
+        promise.catch(error => {
+            console.error("Audio playback failed:", error);
+        });
     }
 }
 
@@ -56,7 +77,7 @@ function resetTimer() {
     pauseTimer();
     workSessionsCompleted = 0;
     currentSession = 'work';
-    timeLeft = WORK_TIME;
+    timeLeft = getSessionDuration();
     updateDisplay();
 }
 
@@ -65,22 +86,15 @@ function nextSession() {
         workSessionsCompleted++;
         if (workSessionsCompleted % 4 === 0) {
             currentSession = 'long-break';
-            timeLeft = LONG_BREAK_TIME;
         } else {
             currentSession = 'short-break';
-            timeLeft = SHORT_BREAK_TIME;
         }
     } else {
         currentSession = 'work';
-        timeLeft = WORK_TIME;
     }
+    timeLeft = getSessionDuration();
+    isPaused = true;
     updateDisplay();
-    startTimer();
-}
-
-function playNotificationSound() {
-    const audio = new Audio('https://www.soundjay.com/buttons/beep-07.wav'); // Example sound
-    audio.play();
 }
 
 // Initial setup
@@ -90,3 +104,6 @@ resetTimer();
 startButton.addEventListener('click', startTimer);
 pauseButton.addEventListener('click', pauseTimer);
 resetButton.addEventListener('click', resetTimer);
+if (testSoundButton) {
+    testSoundButton.addEventListener('click', playNotificationSound);
+}
