@@ -15,7 +15,7 @@ const WORK_TIME = 25 * 60; // 25 minutes
 const SHORT_BREAK_TIME = 5 * 60; // 5 minutes
 const LONG_BREAK_TIME = 15 * 60; // 15 minutes
 
-const notificationAudio = new Audio('https://soundbible.com/grab.php?id=2218&type=wav');
+const notificationAudio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
 
 function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
